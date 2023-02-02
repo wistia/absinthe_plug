@@ -320,6 +320,10 @@ defmodule Absinthe.Plug do
           |> encode(500, error_result(error), config)
       end
     catch
+      :exit, {:timeout, _} = reason ->
+        stack = __STACKTRACE__
+        Plug.Conn.WrapperError.reraise(conn, :error, reason, stack)
+
       kind, reason ->
         stack = __STACKTRACE__
         Plug.Conn.WrapperError.reraise(conn, kind, reason, stack)
